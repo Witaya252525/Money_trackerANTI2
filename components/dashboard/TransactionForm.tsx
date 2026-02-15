@@ -10,21 +10,37 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
-// import { createClient } from "@/utils/supabase/client" // Will use later
+import { useState, useTransition } from "react"
+import { addTransaction } from "@/actions/transactions"
 
 export function TransactionForm() {
     const [amount, setAmount] = useState("")
     const [description, setDescription] = useState("")
+    const [category, setCategory] = useState("")
     const [type, setType] = useState<"income" | "expense">("expense")
+    const [isPending, startTransition] = useTransition()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Logic to save to Supabase will go here
-        console.log({ amount, description, type })
-        // Reset form
-        setAmount("")
-        setDescription("")
+
+        startTransition(async () => {
+            const result = await addTransaction({
+                amount: parseFloat(amount),
+                description,
+                category,
+                type,
+                date: new Date()
+            })
+
+            if (result.success) {
+                setAmount("")
+                setDescription("")
+                setCategory("")
+                alert("Transaction saved!")
+            } else {
+                alert(result.error)
+            }
+        })
     }
 
     return (
@@ -63,6 +79,16 @@ export function TransactionForm() {
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             className="text-lg"
+                            disabled={isPending}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Input
+                            placeholder="Category (e.g., Food, Travel)"
+                            required
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            disabled={isPending}
                         />
                     </div>
                     <div className="space-y-2">
@@ -71,12 +97,13 @@ export function TransactionForm() {
                             required
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                            disabled={isPending}
                         />
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full" type="submit">
-                        Save Transaction
+                    <Button className="w-full" type="submit" disabled={isPending}>
+                        {isPending ? "Saving..." : "Save Transaction"}
                     </Button>
                 </CardFooter>
             </form>

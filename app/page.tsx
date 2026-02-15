@@ -1,6 +1,7 @@
 import { OverviewCards } from "@/components/dashboard/OverviewCards";
 import { TransactionForm } from "@/components/dashboard/TransactionForm";
 import { TransactionList } from "@/components/dashboard/TransactionList";
+import { MonthlyOverviewChart } from "@/components/dashboard/MonthlyOverviewChart";
 
 export default function Home() {
   return (
@@ -11,6 +12,13 @@ export default function Home() {
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <OverviewCards />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            <MonthlyOverviewChart />
+            <div className="col-span-3">
+              {/* Future component or placeholder */}
+            </div>
+          </div>
+
           <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
             <div className="xl:col-span-2">
               <TransactionList />

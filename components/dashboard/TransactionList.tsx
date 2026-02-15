@@ -1,35 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
+import { getRecentTransactions } from "@/actions/transactions"
 
-// Mock data
-const recentTransactions = [
-    {
-        id: "1",
-        amount: 1500,
-        category: "Salary",
-        type: "income",
-        date: "2024-02-16",
-        description: "Freelance Work",
-    },
-    {
-        id: "2",
-        amount: 300,
-        category: "Food",
-        type: "expense",
-        date: "2024-02-15",
-        description: "Lunch",
-    },
-    {
-        id: "3",
-        amount: 120,
-        category: "Transport",
-        type: "expense",
-        date: "2024-02-14",
-        description: "Bus Fare",
-    },
-]
+export async function TransactionList() {
+    const { data: recentTransactions, success } = await getRecentTransactions()
 
-export function TransactionList() {
+    if (!success || !recentTransactions) {
+        return (
+            <Card className="col-span-1">
+                <CardHeader>
+                    <CardTitle>Recent Transactions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Failed to load transactions.</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (recentTransactions.length === 0) {
+        return (
+            <Card className="col-span-1">
+                <CardHeader>
+                    <CardTitle>Recent Transactions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">No transactions yet.</p>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <Card className="col-span-1">
             <CardHeader>
@@ -49,7 +50,7 @@ export function TransactionList() {
                             <div className="ml-4 space-y-1">
                                 <p className="text-sm font-medium leading-none">{transaction.description}</p>
                                 <p className="text-xs text-muted-foreground">
-                                    {transaction.category} • {transaction.date}
+                                    {transaction.category} • {new Date(transaction.date).toLocaleDateString()}
                                 </p>
                             </div>
                             <div className={`ml-auto font-medium ${transaction.type === 'income' ? 'text-income' : 'text-expense'}`}>

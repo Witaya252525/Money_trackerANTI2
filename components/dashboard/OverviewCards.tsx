@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDownIcon, ArrowUpIcon, Wallet } from "lucide-react"
+import { getFinancialSummary } from "@/actions/transactions"
 
-export function OverviewCards() {
+export async function OverviewCards() {
+    const { data: summary, success } = await getFinancialSummary()
+
+    const income = summary?.income || 0
+    const expense = summary?.expense || 0
+    const balance = summary?.balance || 0
+
     return (
         <div className="grid gap-4 md:grid-cols-3">
             <Card>
@@ -10,9 +17,10 @@ export function OverviewCards() {
                     <Wallet className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">฿0.00</div>
+                    <div className="text-2xl font-bold">฿{balance.toFixed(2)}</div>
                     <p className="text-xs text-muted-foreground">
-                        +0% from last month
+                        {/* +0% from last month - TODO: Implement comparison */}
+                        Current Balance
                     </p>
                 </CardContent>
             </Card>
@@ -22,9 +30,9 @@ export function OverviewCards() {
                     <ArrowUpIcon className="h-4 w-4 text-income" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-income">฿0.00</div>
+                    <div className="text-2xl font-bold text-income">฿{income.toFixed(2)}</div>
                     <p className="text-xs text-muted-foreground">
-                        +0% from last month
+                        Total Income
                     </p>
                 </CardContent>
             </Card>
@@ -34,9 +42,9 @@ export function OverviewCards() {
                     <ArrowDownIcon className="h-4 w-4 text-expense" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-expense">฿0.00</div>
+                    <div className="text-2xl font-bold text-expense">฿{expense.toFixed(2)}</div>
                     <p className="text-xs text-muted-foreground">
-                        +0% from last month
+                        Total Expenses
                     </p>
                 </CardContent>
             </Card>
